@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DigitalIO Tools Hub - Free Online Productivity Tools</title>
+<meta name="description" content="DigitalIO Hub: Free online tools for image compression, resizing, CSV/Excel conversion, invoice generation, PDF export, word counting and more.">
+
+<!-- Open Graph / Social sharing -->
+<meta property="og:title" content="DigitalIO Tools Hub - Free Online Productivity Tools">
+<meta property="og:description" content="Compress images, resize, generate invoices, convert CSV/Excel and more — all free!">
+<meta property="og:url" content="https://www.digitalio.store/">
+<meta property="og:image" content="https://www.digitalio.store/preview.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-220CF5D776"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-220CF5D776');
+</script>
+
+<style>
+body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
+.container { max-width: 1000px; margin:auto; padding:20px; }
+h1 { text-align:center; margin-bottom:30px; }
+.tools-grid { display: flex; flex-wrap: wrap; gap:20px; justify-content: center; }
+.card { background:white; padding:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); flex:1 1 300px; max-width: 350px; transition: transform 0.2s; }
+.card:hover { transform: scale(1.03); }
+.card h2 { margin-top:0; font-size:20px; }
+input, textarea, button, select { width: 100%; margin:5px 0; padding:8px; border-radius:5px; border:1px solid #ccc; box-sizing:border-box; }
+button { background:#007bff; color:white; border:none; cursor:pointer; }
+button:hover { background:#0056b3; }
+img { max-width:100%; border-radius:5px; margin-top:10px; }
+</style>
+
+<!-- Libraries -->
+<script src="https://unpkg.com/browser-image-compression@1.0.16/dist/browser-image-compression.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+<h1>DigitalIO Tools Hub</h1>
+<div class="tools-grid">
+
+<!-- Image Compressor -->
+<div class="card">
+<h2>Image Compressor</h2>
+<input type="file" id="compressImage" accept="image/*">
+<input type="range" id="quality" min="0.1" max="1" step="0.1" value="0.8">
+<button onclick="compress()">Compress</button>
+<img id="preview" alt="Compressed image preview">
+</div>
+
+<!-- Image Resizer -->
+<div class="card">
+<h2>Image Resizer</h2>
+<input type="file" id="resizeImage" accept="image/*">
+<input type="number" id="resizeWidth" placeholder="Width px">
+<input type="number" id="resizeHeight" placeholder="Height px">
+<button onclick="resizeImageFunc()">Resize</button>
+<img id="resizePreview" alt="Resized image preview">
+</div>
+
+<!-- CSV ↔ Excel Converter -->
+<div class="card">
+<h2>CSV ↔ Excel Converter</h2>
+<p>Upload CSV or Excel file to convert</p>
+<input type="file" id="csvFile">
+<button onclick="convertCSV()">Convert</button>
+</div>
+
+<!-- HTML to PDF -->
+<div class="card">
+<h2>HTML to PDF</h2>
+<textarea id="htmlContent" rows="4" placeholder="Enter HTML here"></textarea>
+<button onclick="htmlToPDF()">Download PDF</button>
+</div>
+
+<!-- Word Counter -->
+<div class="card">
+<h2>Word Counter</h2>
+<textarea id="wordText" rows="3" placeholder="Enter text"></textarea>
+<button onclick="countWords()">Count Words</button>
+<p id="wordResult">0 words</p>
+</div>
+
+<!-- Text Case Converter -->
+<div class="card">
+<h2>Text Case Converter</h2>
+<textarea id="textCaseInput" rows="3" placeholder="Enter text"></textarea>
+<select id="caseSelect">
+<option value="upper">UPPERCASE</option>
+<option value="lower">lowercase</option>
+<option value="title">Title Case</option>
+</select>
+<button onclick="convertCase()">Convert</button>
+<p id="caseResult"></p>
+</div>
+
+<!-- Invoice Generator -->
+<div class="card">
+<h2>Invoice Generator</h2>
+<textarea id="invoiceText" rows="4" placeholder="Enter invoice info"></textarea>
+<button onclick="generateInvoice()">Download Invoice PDF</button>
+</div>
+
+</div>
+</div>
+
+<script>
+// Image Compressor
+async function compress() {
+  const file = document.getElementById('compressImage').files[0];
+  if(!file) return alert('Upload image first');
+  const options = { maxSizeMB:1, initialQuality: parseFloat(document.getElementById('quality').value) };
+  const compressed = await imageCompression(file, options);
+  document.getElementById('preview').src = URL.createObjectURL(compressed);
+}
+
+// Image Resizer
+function resizeImageFunc() {
+  const file = document.getElementById('resizeImage').files[0];
+  const width = parseInt(document.getElementById('resizeWidth').value);
+  const height = parseInt(document.getElementById('resizeHeight').value);
+  if(!file || !width || !height) return alert('Upload image and set width/height');
+  const img = new Image();
+  img.onload = function() {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, width, height);
+    document.getElementById('resizePreview').src = canvas.toDataURL('image/png');
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+// CSV ↔ Excel Converter (placeholder)
+function convertCSV() {
+  alert('CSV/Excel conversion tool coming soon!');
+}
+
+// HTML to PDF
+function htmlToPDF() {
+  html2pdf().from(document.getElementById('htmlContent').value).save('document.pdf');
+}
+
+// Word Counter
+function countWords() {
+  const text = document.getElementById('wordText').value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  document.getElementById('wordResult').innerText = words + " words";
+}
+
+// Text Case Converter
+function convertCase() {
+  let text = document.getElementById('textCaseInput').value;
+  const type = document.getElementById('caseSelect').value;
+  if(type==='upper') text = text.toUpperCase();
+  else if(type==='lower') text = text.toLowerCase();
+  else if(type==='title') text = text.replace(/\w\S*/g, w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase());
+  document.getElementById('caseResult').innerText = text;
+}
+
+// Invoice Generator
+function generateInvoice() {
+  const content = "<pre>"+document.getElementById('invoiceText').value+"</pre>";
+  html2pdf().from(content).save('invoice.pdf');
+}
+</script>
+
+</body>
+</html>
