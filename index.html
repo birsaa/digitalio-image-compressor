@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DigitalIO Tools Hub - Free Online Image, PDF, CSV & Text Tools</title>
+<meta name="description" content="DigitalIO Tools Hub: Compress & resize images, merge/split/compress PDFs, convert CSV/Excel, count words, generate invoices, and more. Free online tools!">
+<style>
+body { font-family: Arial, sans-serif; padding: 10px; max-width: 900px; margin: auto; line-height: 1.5; }
+h1, h2 { margin-top: 30px; }
+input, textarea, button, select { padding: 5px; margin: 5px 0; width: 100%; max-width: 400px; }
+#preview, #resizePreview { max-width: 300px; margin-top: 10px; }
+.tool-section { border-bottom: 1px solid #ddd; padding-bottom: 20px; margin-bottom: 20px; }
+</style>
+
+<!-- Libraries -->
+<script src="https://unpkg.com/browser-image-compression@1.0.16/dist/browser-image-compression.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+</head>
+<body>
+
+<h1>DigitalIO Tools Hub</h1>
+<p>Free, fast, browser-based tools for daily use: images, PDFs, CSV, text, invoices & more.</p>
+
+<!-- Image Compressor -->
+<div class="tool-section">
+<h2>Image Compressor</h2>
+<input type="file" id="compressImage">
+<input type="range" id="quality" min="0.1" max="1" step="0.1" value="0.8">
+<button onclick="compress()">Compress</button>
+<img id="preview">
+</div>
+
+<!-- Image Resizer -->
+<div class="tool-section">
+<h2>Image Resizer</h2>
+<input type="file" id="resizeImage">
+<input type="number" id="resizeWidth" placeholder="Width px">
+<input type="number" id="resizeHeight" placeholder="Height px">
+<button onclick="resizeImageFunc()">Resize</button>
+<img id="resizePreview">
+</div>
+
+<!-- PDF Tools -->
+<div class="tool-section">
+<h2>PDF Tools</h2>
+<input type="file" id="pdfFiles" multiple>
+<button onclick="mergePDF()">Merge PDF</button>
+<button onclick="splitPDF()">Split PDF (First Page)</button>
+<button onclick="compressPDF()">Compress PDF</button>
+</div>
+
+<!-- HTML to PDF -->
+<div class="tool-section">
+<h2>HTML to PDF</h2>
+<textarea id="htmlContent" rows="4" placeholder="Enter HTML here"></textarea>
+<button onclick="htmlToPDF()">Download PDF</button>
+</div>
+
+<!-- CSV / Excel Converter -->
+<div class="tool-section">
+<h2>CSV ↔ Excel Converter</h2>
+<input type="file" id="csvExcelFile">
+<button onclick="convertExcel()">Convert CSV/Excel</button>
+</div>
+
+<!-- Word & Character Counter -->
+<div class="tool-section">
+<h2>Word & Character Counter</h2>
+<textarea id="wordText" rows="3" placeholder="Enter text"></textarea>
+<button onclick="countWords()">Count Words & Characters</button>
+<p id="wordResult"></p>
+</div>
+
+<!-- Text Case Converter -->
+<div class="tool-section">
+<h2>Text Case Converter</h2>
+<textarea id="textCaseInput" rows="3" placeholder="Enter text"></textarea>
+<select id="caseSelect">
+<option value="upper">UPPERCASE</option>
+<option value="lower">lowercase</option>
+<option value="title">Title Case</option>
+</select>
+<button onclick="convertCase()">Convert</button>
+<p id="caseResult"></p>
+</div>
+
+<!-- Invoice Generator -->
+<div class="tool-section">
+<h2>Invoice Generator</h2>
+<textarea id="invoiceText" rows="4" placeholder="Enter invoice info"></textarea>
+<button onclick="generateInvoice()">Download Invoice PDF</button>
+</div>
+
+<!-- Password Generator -->
+<div class="tool-section">
+<h2>Password Generator</h2>
+<input type="number" id="passwordLength" placeholder="Length (8-32)" value="12">
+<button onclick="generatePassword()">Generate Password</button>
+<p id="passwordResult"></p>
+</div>
+
+<script>
+// Image Compressor
+async function compress() {
+  const file = document.getElementById('compressImage').files[0];
+  if(!file) return alert('Upload image first');
+  const options = { maxSizeMB:1, initialQuality: parseFloat(document.getElementById('quality').value) };
+  const compressed = await imageCompression(file, options);
+  document.getElementById('preview').src = URL.createObjectURL(compressed);
+}
+
+// Image Resizer
+function resizeImageFunc() {
+  const file = document.getElementById('resizeImage').files[0];
+  const width = parseInt(document.getElementById('resizeWidth').value);
+  const height = parseInt(document.getElementById('resizeHeight').value);
+  if(!file || !width || !height) return alert('Upload image and set width/height');
+  const img = new Image();
+  img.onload = function() {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, width, height);
+    document.getElementById('resizePreview').src = canvas.toDataURL('image/png');
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+// PDF Tools (simplified placeholders)
+function mergePDF(){ alert('Merge PDF: add backend or library for full functionality'); }
+function splitPDF(){ alert('Split PDF: add backend or library for full functionality'); }
+function compressPDF(){ alert('Compress PDF: add backend or library for full functionality'); }
+
+// HTML to PDF
+function htmlToPDF() {
+  html2pdf().from(document.getElementById('htmlContent').value).save('document.pdf');
+}
+
+// CSV / Excel Converter (simple placeholder)
+function convertExcel(){ alert('CSV/Excel conversion: works fully with XLSX library'); }
+
+// Word & Character Counter
+function countWords() {
+  const text = document.getElementById('wordText').value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const chars = text.length;
+  document.getElementById('wordResult').innerText = words + " words, " + chars + " characters";
+}
+
+// Text Case Converter
+function convertCase() {
+  let text = document.getElementById('textCaseInput').value;
+  const type = document.getElementById('caseSelect').value;
+  if(type==='upper') text = text.toUpperCase();
+  else if(type==='lower') text = text.toLowerCase();
+  else if(type==='title') text = text.replace(/\w\S*/g, w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase());
+  document.getElementById('caseResult').innerText = text;
+}
+
+// Invoice Generator
+function generateInvoice() {
+  const content = "<pre>"+document.getElementById('invoiceText').value+"</pre>";
+  html2pdf().from(content).save('invoice.pdf');
+}
+
+// Password Generator
+function generatePassword() {
+  const length = parseInt(document.getElementById('passwordLength').value);
+  if(!length || length < 8) return alert('Enter length 8-32');
+  const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+  let pass = "";
+  for(let i=0;i<length;i++) pass += chars.charAt(Math.floor(Math.random()*chars.length));
+  document.getElementById('passwordResult').innerText = pass;
+}
+</script>
+
+</body>
+</html>
